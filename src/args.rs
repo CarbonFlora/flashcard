@@ -11,4 +11,10 @@ pub struct FlashcardArgs {
     ///Select any number of text files.
     pub card_stack: Vec<String>,
 }
-//impliment flags.
+
+// /// Name of the person to greet
+// #[arg(short, long, default_value_t={"0".to_string()})]
+// name: String,
+// /// toggle 
+// #[arg(short, long, default_value_t=false)]
+// togg: bool,

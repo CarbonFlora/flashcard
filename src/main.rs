@@ -1,5 +1,10 @@
 use flashcard::features::*;
 
 fn main() {
-    println!("{:#?}", read_inputs());
+    let deck = read_inputs();
+    let mut i = true;
+    while i {
+        dbg!(&i);
+        i = read_flashcards(&deck);
+    }
 }
