@@ -1,3 +1,5 @@
+use flashcard::features::*;
+
 fn main() {
-    println!("Hello, world!");
+    println!("{:#?}", read_inputs());
 }
