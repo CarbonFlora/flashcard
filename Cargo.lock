@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "chinese"
+name = "flashcard"
 version = "0.1.0"
