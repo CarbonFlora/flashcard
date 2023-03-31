@@ -1,5 +1,6 @@
 [package]
 name = "flashcard"
+description = "Barebones flashcard system"
 version = "1.0.1"
 edition = "2021"
 
