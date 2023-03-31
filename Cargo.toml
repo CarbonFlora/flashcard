@@ -1,8 +1,14 @@
 [package]
-name = "flashcard"
+name = "flcard"
+authors = ["Zi Hao Liang"]
 description = "Barebones flashcard system"
 version = "1.0.1"
 edition = "2021"
+readme = "readme.md"
+repository = "https://github.com/CarbonFlora/flashcard"
+license = "Apache-2.0"
+keywords = ["cli", "terminal","flashcards"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

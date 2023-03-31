@@ -176,7 +176,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "flashcard"
+name = "flcard"
 version = "1.0.1"
 dependencies = [
  "anyhow",

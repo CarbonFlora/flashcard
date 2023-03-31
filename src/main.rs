@@ -1,4 +1,4 @@
-use flashcard::features::*;
+use flcard::features::*;
 
 fn main() {
     let state = read_inputs();
