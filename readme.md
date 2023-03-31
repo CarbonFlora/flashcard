@@ -2,7 +2,7 @@
 
 Barebones flashcard system.  
 
-###To use,  
+### To use,  
 1. Clone the repository.  
 2. Install the repo using:  
   
