@@ -66,18 +66,26 @@ pub fn read_flashcards(deck: Arguments) -> (bool, Arguments) {
 }
 
 fn random_shuffle(mut deck: Arguments) -> Arguments {
-    for card in &deck.clone() {
+    let args = FlashcardArgs::parse();
+    for mut card in &deck.clone() {
+        if args.reverse {
+            let i = card.0;
+            card.0 = card.1;
+            card.1 = i;
+        }
         println!("{} {} ", "?".yellow(), card.0);
         print!("{} ", "~".yellow());
         let _ = io::stdout().flush();
         let mut pause = String::new();
         let _ = io::stdin().read_line(&mut pause);
         println!("{} {}", ">".yellow(), card.1.bright_green());
-        print!("{} ", "Type anything to remove.".red());
-        let _ = io::stdout().flush();
-        let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or(' ');
-        if !(input.to_string().is_empty() || input == ' ') {
-            deck.remove(card.0);
+        if !args.maintain {
+            print!("{} ", "Type anything to remove.".red());
+            let _ = io::stdout().flush();
+            let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or(' ');
+            if !(input.to_string().is_empty() || input == ' ') {
+                deck.remove(card.0);
+            }
         }
     }
     deck
