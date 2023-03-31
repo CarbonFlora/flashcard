@@ -9,3 +9,5 @@ edition = "2021"
 anyhow = "1.0.70"
 clap = { version = "4.2.1", features = ["derive"] }
 clap_complete = "4.2.0"
+colored = "2.0.0"
+rand = "0.8.5"

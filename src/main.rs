@@ -1,9 +1,14 @@
 use flashcard::features::*;
 
 fn main() {
-    let deck = read_inputs();
-    let mut i = true;
-    while i {
-        i = read_flashcards(&deck);
+    let state = read_inputs();
+    match state {
+        Err(err) => eprintln!("{:?}", err),
+        Ok(mut deck) => {
+            let mut i = true;
+            while i {
+                (i, deck) = read_flashcards(deck);
+            }
+        },
     }
 }

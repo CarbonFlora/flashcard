@@ -1,16 +1,18 @@
 use crate::args::FlashcardArgs;
 use clap::Parser;
 use anyhow::{Result, anyhow};
+use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufReader, BufRead, self};
+use std::io::{BufReader, BufRead, self, Write};
+use colored::Colorize;
 
-type Arguments = (Vec<String>, Vec<String>);
+type Arguments = HashMap<String, String>;
 const ALL_DELIMITERS: [char; 8] = ['|', '\\', '/', '(', '[', '{', '<', '-'];
 const CLOSING_DELIMITERS: [char; 4] = [')', ']', '}', '>'];
 
 pub fn read_inputs() -> Result<Arguments> {
     let args = FlashcardArgs::parse();
-    let mut deck: Arguments = (Vec::new(), Vec::new());
+    let mut deck: Arguments = HashMap::new();
     for file_path in args.card_stack {
         let mut buffered = BufReader::new(File::open(file_path)?).lines().flatten().peekable();
         let seperator = examine_seperator(buffered.peek())?;
@@ -20,8 +22,8 @@ pub fn read_inputs() -> Result<Arguments> {
             match i {
                 None => eprintln!("Skipped line: {line}"),
                 Some(args) => {
-                    deck.0.push(args.0.to_string());
-                    deck.1.push(clean_last(args.1.to_string()));},
+                    deck.insert(args.0.to_string(), clean_last(args.1.to_string()));
+                },
             };
         }
         
@@ -50,16 +52,33 @@ fn clean_last(mut arg2: String) -> String {
     arg2
 }
 
-pub fn read_flashcards(deck: &Result<Arguments>) -> bool {
-    match deck {
-        Ok(deck) => println!("{:#?}", deck),
-        Err(err) => eprintln!("{:?}", err),
-    }
+pub fn read_flashcards(deck: Arguments) -> (bool, Arguments) {
+    // Body
+    let deck = random_shuffle(deck);
 
+    // Conclusion
     println!("\nFinished studying the deck!\nWould you like to complete another iteration? Y/N");
     let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or('y');
     if input.to_lowercase().to_string() == "n".to_string() {
-        return false;
+        return (false, deck);
     }
-    true
+    (true, deck)
+}
+
+fn random_shuffle(mut deck: Arguments) -> Arguments {
+    for card in &deck.clone() {
+        println!("{} {} ", "?".yellow(), card.0);
+        print!("{} ", "~".yellow());
+        let _ = io::stdout().flush();
+        let mut pause = String::new();
+        let _ = io::stdin().read_line(&mut pause);
+        println!("{} {}", ">".yellow(), card.1.bright_green());
+        print!("{} ", "Type anything to remove.".red());
+        let _ = io::stdout().flush();
+        let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or(' ');
+        if !(input.to_string().is_empty() || input == ' ') {
+            deck.remove(card.0);
+        }
+    }
+    deck
 }

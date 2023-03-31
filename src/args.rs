@@ -8,7 +8,8 @@ use clap::{
 #[command(version="0.1.0")]
 #[command(about="Simple flashcard system built in Rust.", long_about = None)]
 pub struct FlashcardArgs {
-    ///Select any number of text files.
+    ///Select any number of text files
+    #[arg(required=true)]
     pub card_stack: Vec<String>,
 }
 
