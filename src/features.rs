@@ -4,6 +4,7 @@ use anyhow::{Result, anyhow};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufReader, BufRead, self, Write};
+use std::mem::swap;
 use colored::Colorize;
 
 type Arguments = HashMap<String, String>;
@@ -59,7 +60,7 @@ pub fn read_flashcards(deck: Arguments) -> (bool, Arguments) {
     // Conclusion
     println!("\nFinished studying the deck!\nWould you like to complete another iteration? Y/N");
     let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or('y');
-    if input.to_lowercase().to_string() == "n".to_string() {
+    if input.to_lowercase().to_string() == *"n" {
         return (false, deck);
     }
     (true, deck)
@@ -69,9 +70,7 @@ fn random_shuffle(mut deck: Arguments) -> Arguments {
     let args = FlashcardArgs::parse();
     for mut card in &deck.clone() {
         if args.reverse {
-            let i = card.0;
-            card.0 = card.1;
-            card.1 = i;
+            swap(&mut card.0, &mut card.1);
         }
         println!("{} {} ", "?".yellow(), card.0);
         print!("{} ", "~".yellow());
