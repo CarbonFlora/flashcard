@@ -2,7 +2,13 @@
 
 Barebones flashcard system.  
 
-### To use,  
+### To use:  
+1. Install the repo directly from crates.io using:  
+  
+cargo install flcard  
+  
+OR  
+  
 1. Clone the repository.  
 2. Install the repo using:  
   
