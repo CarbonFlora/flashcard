@@ -9,6 +9,6 @@ fn main() {
             while i {
                 (i, deck) = read_flashcards(deck);
             }
-        },
+        }
     }
 }

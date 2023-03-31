@@ -1,11 +1,11 @@
 use crate::args::FlashcardArgs;
+use anyhow::{anyhow, Result};
 use clap::Parser;
-use anyhow::{Result, anyhow};
+use colored::Colorize;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufReader, BufRead, self, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::mem::swap;
-use colored::Colorize;
 
 type Arguments = HashMap<String, String>;
 const ALL_DELIMITERS: [char; 8] = ['|', '\\', '/', '(', '[', '{', '<', '-'];
@@ -15,7 +15,10 @@ pub fn read_inputs() -> Result<Arguments> {
     let args = FlashcardArgs::parse();
     let mut deck: Arguments = HashMap::new();
     for file_path in args.card_stack {
-        let mut buffered = BufReader::new(File::open(file_path)?).lines().flatten().peekable();
+        let mut buffered = BufReader::new(File::open(file_path)?)
+            .lines()
+            .flatten()
+            .peekable();
         let seperator = examine_seperator(buffered.peek())?;
 
         for line in buffered {
@@ -24,10 +27,9 @@ pub fn read_inputs() -> Result<Arguments> {
                 None => eprintln!("Skipped line: {line}"),
                 Some(args) => {
                     deck.insert(args.0.to_string(), clean_last(args.1.to_string()));
-                },
+                }
             };
         }
-        
     }
 
     Ok(deck)
@@ -37,11 +39,14 @@ fn examine_seperator(line: Option<&String>) -> Result<char> {
     if let Some(line) = line {
         for delimiter in ALL_DELIMITERS {
             if let Some(char) = line.chars().find(|x| *x == delimiter) {
-                return Ok(char)
+                return Ok(char);
             }
         }
     }
-    Err(anyhow!("No delimiter was found. Please use one of the following as a delimiter:\n{:?}", ALL_DELIMITERS))
+    Err(anyhow!(
+        "No delimiter was found. Please use one of the following as a delimiter:\n{:?}",
+        ALL_DELIMITERS
+    ))
 }
 
 fn clean_last(mut arg2: String) -> String {
@@ -59,7 +64,15 @@ pub fn read_flashcards(deck: Arguments) -> (bool, Arguments) {
 
     // Conclusion
     println!("\nFinished studying the deck!\nWould you like to complete another iteration? Y/N");
-    let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or('y');
+    let input = io::stdin()
+        .lock()
+        .lines()
+        .next()
+        .unwrap()
+        .unwrap()
+        .chars()
+        .next()
+        .unwrap_or('y');
     if input.to_lowercase().to_string() == *"n" {
         return (false, deck);
     }
@@ -81,7 +94,15 @@ fn random_shuffle(mut deck: Arguments) -> Arguments {
         if !args.maintain {
             print!("{} ", "Type anything to remove.".red());
             let _ = io::stdout().flush();
-            let input = io::stdin().lock().lines().next().unwrap().unwrap().chars().next().unwrap_or(' ');
+            let input = io::stdin()
+                .lock()
+                .lines()
+                .next()
+                .unwrap()
+                .unwrap()
+                .chars()
+                .next()
+                .unwrap_or(' ');
             if !(input.to_string().is_empty() || input == ' ') {
                 deck.remove(card.0);
             }
